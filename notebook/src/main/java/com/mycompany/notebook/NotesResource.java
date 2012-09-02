@@ -15,6 +15,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import org.glassfish.jersey.media.sse.EventChannel;
 
 /**
  *
@@ -24,6 +25,15 @@ import javax.ws.rs.core.UriInfo;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class NotesResource {
+    @GET
+    @Path("events")
+    @Produces(EventChannel.SERVER_SENT_EVENTS)
+    public EventChannel getEvents() {
+        EventChannel ec = new EventChannel();
+        DataProvider.registerListener(ec);
+        return ec;
+    }
+    
     @GET
     public List<Note> get() {
         return DataProvider.allNotes();
@@ -37,7 +47,7 @@ public class NotesResource {
                 ).build();
     }
     
-    @Path("{id}")
+    @Path("{id:[0-9]+}")
     public NoteResource getNote(@PathParam("id") int noteId) {
         return new NoteResource(noteId);
     }

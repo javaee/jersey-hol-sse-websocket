@@ -12,6 +12,7 @@ import org.glassfish.grizzly.http.server.ServerConfiguration;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpContainer;
 import org.glassfish.jersey.internal.ProcessingException;
+import org.glassfish.jersey.media.sse.OutboundEventWriter;
 import org.glassfish.jersey.message.internal.ReaderWriter;
 import org.glassfish.jersey.moxy.json.MoxyJsonBinder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -23,6 +24,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 public class Main {
     public static final String APP_PATH = "/notebook/";
     public static final String API_PATH = "/notebook-api/";
+    public static final String WEB_ROOT = "/webroot";
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
@@ -69,6 +71,7 @@ public class Main {
         // in com.mycompany.notebook package
         final ResourceConfig rc = new ResourceConfig()
                 .packages("com.mycompany.notebook")
+                .addClasses(OutboundEventWriter.class)
                 .addBinders(new MoxyJsonBinder());
 
        
@@ -97,7 +100,7 @@ public class Main {
                 uri = uri.substring(resourcesContextPath.length());
             }
             
-            InputStream fileStream = Main.class.getResourceAsStream(uri);
+            InputStream fileStream = Main.class.getResourceAsStream(WEB_ROOT + uri);
             if (fileStream == null) {
                 response.sendError(HttpStatus.NOT_FOUND_404.getStatusCode());
             } else {

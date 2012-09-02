@@ -17,6 +17,11 @@
             <artifactId>jersey-media-moxy</artifactId>
             <version>${jersey-version}</version>
         </dependency>
+         <dependency>
+             <groupId>org.glassfish.jersey.media</groupId>
+             <artifactId>jersey-media-sse</artifactId>
+             <version>${jersey-version}</version>
+         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -60,7 +65,7 @@
         </plugins>
     </build>
     <properties>
-        <jersey-version>2.0-m06</jersey-version>
+        <jersey-version>2.0-SNAPSHOT</jersey-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>
