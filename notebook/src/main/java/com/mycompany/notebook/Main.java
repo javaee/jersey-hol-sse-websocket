@@ -1,7 +1,9 @@
 package com.mycompany.notebook;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import javax.ws.rs.ext.RuntimeDelegate;
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -30,7 +32,7 @@ public class Main {
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
      * @return Grizzly HTTP server.
      */
-    public static HttpServer startServer() {
+    public static HttpServer startServer(String webrootPath) {
         final HttpServer server = new HttpServer();
         final NetworkListener listener = new NetworkListener("grizzly", "localhost", 8080);
 
@@ -40,7 +42,7 @@ public class Main {
         final ServerConfiguration config = server.getServerConfiguration();
 
         config.addHttpHandler(createJerseyHandler(), API_PATH);
-        config.addHttpHandler(new StaticContentHandler(), APP_PATH);
+        config.addHttpHandler(new StaticContentHandler(webrootPath), APP_PATH);
 
         try {
             // Start the server.
@@ -58,7 +60,7 @@ public class Main {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        final HttpServer server = startServer();
+        final HttpServer server = startServer(args.length >= 1 ? args[0] : null);
         System.out.println(String.format("Jersey app started. The resources are"
                 + "available under http://localhost:8080%s\nHit enter to stop it..."
                 , API_PATH));
@@ -79,13 +81,33 @@ public class Main {
     }
 
     private static class StaticContentHandler extends HttpHandler {
-        private static final String[] ALLOWED_EXTENSIONS = {".html", ".js", 
-            ".css", ".png", ".ico"};
+        private static final HashMap<String, String> EXTENSION_TO_MEDIA_TYPE;
+        
+        static {
+            EXTENSION_TO_MEDIA_TYPE = new HashMap<String, String>();
+            
+            EXTENSION_TO_MEDIA_TYPE.put("html", "text/html");
+            EXTENSION_TO_MEDIA_TYPE.put("js", "application/javascript");
+            EXTENSION_TO_MEDIA_TYPE.put("css", "text/css");
+            EXTENSION_TO_MEDIA_TYPE.put("png", "image/png");
+            EXTENSION_TO_MEDIA_TYPE.put("ico", "image/png");
+        }
+        
+        private final String webrootPath;
+        
+        StaticContentHandler(String webrootPath) {
+            this.webrootPath = webrootPath;
+        }
         
         @Override
         public void service(Request request, Response response) throws Exception {
             String uri = request.getRequestURI();
-            if (uri.contains("..") || !checkExtension(uri)) {
+            
+            int pos = uri.lastIndexOf('.');
+            String extension = uri.substring(pos + 1);
+            String mediaType = EXTENSION_TO_MEDIA_TYPE.get(extension);
+            
+            if (uri.contains("..") || mediaType == null) {
                 response.sendError(HttpStatus.NOT_FOUND_404.getStatusCode());
                 return;
             }
@@ -100,22 +122,23 @@ public class Main {
                 uri = uri.substring(resourcesContextPath.length());
             }
             
-            InputStream fileStream = Main.class.getResourceAsStream(WEB_ROOT + uri);
+            InputStream fileStream;
+            
+            try {
+                fileStream = webrootPath == null ?
+                        Main.class.getResourceAsStream(WEB_ROOT + uri) :
+                        new FileInputStream(webrootPath + uri);
+            } catch (IOException e) {
+                fileStream = null;
+            }
+            
             if (fileStream == null) {
                 response.sendError(HttpStatus.NOT_FOUND_404.getStatusCode());
             } else {
                 response.setStatus(HttpStatus.OK_200);
+                response.setContentType(mediaType);
                 ReaderWriter.writeTo(fileStream, response.getOutputStream());
             }
-        }
-        
-        private boolean checkExtension(String uri) {
-            for (String extension : ALLOWED_EXTENSIONS) {
-                if (uri.endsWith(extension)) {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

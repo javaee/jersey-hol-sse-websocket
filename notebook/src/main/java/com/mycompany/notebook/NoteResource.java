@@ -46,6 +46,7 @@ public class NoteResource {
     }
     
     @DELETE
+    @Consumes("*/*")
     public void delete() {
         if (!DataProvider.deleteById(noteId)) {
             throw new WebApplicationException(404);
