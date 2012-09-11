@@ -1,0 +1,35 @@
+<h2>Drawing '{{drawing.name}}'</h2>
+
+<p>Click to draw below (use SHIFT key too) <p>
+
+<form class="form-horizontal">
+    <select id="shapeType">
+        <option value="BIG_CIRCLE">Big Circle</option>
+        <option value="SMALL_CIRCLE">Small Circle</option>
+        <option value="BIG_SQUARE">Big Square</option>
+        <option value="SMALL_SQUARE">Small Square</option>
+    </select>
+    <select id="shapeColor">
+        <option value="RED">Red</option>
+        <option value="GREEN">Green</option>
+        <option value="BLUE">Blue</option>
+        <option value="YELLOW">Yellow</option>
+    </select>
+    <button onclick="clear_canvas()">Clear</button>
+</form>
+
+
+<table>
+    <tbody>
+        <tr>
+            <td>
+                <canvas id="drawing" width="500" height="500"></canvas>
+                <script ng-repeat="shape in drawing.shapes">
+                    drawShape(shape);
+                </script>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<a class="btn" href="#home">Back</a>

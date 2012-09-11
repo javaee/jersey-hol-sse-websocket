@@ -1,4 +1,4 @@
-package com.mycompany.notebook;
+package com.mycompany.drawingboard;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -13,42 +13,42 @@ import javax.ws.rs.core.UriInfo;
 
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class NoteResource {
-    private final int noteId;
+public class DrawingResource {
+    private final int drawingId;
     
-    NoteResource(int noteId) {
-        this.noteId = noteId;
+    DrawingResource(int drawingId) {
+        this.drawingId = drawingId;
     }
 
     @GET
-    public Note get() {
-        Note note = DataProvider.getById(noteId);
-        if (note == null) {
+    public Drawing get() {
+        Drawing drawing = DataProvider.getById(drawingId);
+        if (drawing == null) {
             throw new WebApplicationException(404);
         }
-        return note;
+        return drawing;
     }
     
     @PUT
-    public Response put(@Context UriInfo uriInfo, Note note) {
-        if (note.id != noteId) {
+    public Response put(@Context UriInfo uriInfo, Drawing drawing) {
+        if (drawing.id != drawingId) {
             throw new WebApplicationException(401);
         }
         Response.ResponseBuilder rb;
-        if (DataProvider.put(note)) {
+        if (DataProvider.put(drawing)) {
             rb = Response.created(uriInfo.getBaseUriBuilder()
-                    .path(NotesResource.class, "getNote")
-                    .build(noteId));
+                    .path(DrawingsResource.class, "getNote")
+                    .build(drawingId));
         } else {
             rb = Response.ok();
         }
-        return rb.entity(note).type(MediaType.APPLICATION_JSON).build();
+        return rb.entity(drawing).type(MediaType.APPLICATION_JSON).build();
     }
     
     @DELETE
     @Consumes("*/*")
     public void delete() {
-        if (!DataProvider.deleteById(noteId)) {
+        if (!DataProvider.deleteById(drawingId)) {
             throw new WebApplicationException(404);
         }
     }

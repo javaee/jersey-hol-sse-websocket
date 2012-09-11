@@ -1,4 +1,4 @@
-package com.mycompany.notebook;
+package com.mycompany.drawingboard;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,8 +24,8 @@ import org.glassfish.jersey.server.ResourceConfig;
  *
  */
 public class Main {
-    public static final String APP_PATH = "/notebook/";
-    public static final String API_PATH = "/notebook-api/";
+    public static final String APP_PATH = "/drawingboard/";
+    public static final String API_PATH = "/drawingboard-api/";
     public static final String WEB_ROOT = "/webroot";
 
     /**
@@ -72,7 +72,7 @@ public class Main {
         // create a resource config that scans for JAX-RS resources and providers
         // in com.mycompany.notebook package
         final ResourceConfig rc = new ResourceConfig()
-                .packages("com.mycompany.notebook")
+                .packages("com.mycompany.drawingboard")
                 .addClasses(OutboundEventWriter.class)
                 .addBinders(new MoxyJsonBinder());
 
