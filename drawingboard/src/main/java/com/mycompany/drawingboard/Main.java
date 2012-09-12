@@ -3,6 +3,7 @@ package com.mycompany.drawingboard;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import javax.ws.rs.ext.RuntimeDelegate;
 import org.glassfish.grizzly.http.server.HttpHandler;
@@ -12,21 +13,21 @@ import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 import org.glassfish.grizzly.http.server.ServerConfiguration;
 import org.glassfish.grizzly.http.util.HttpStatus;
+import org.glassfish.grizzly.websockets.WebSocketAddOn;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpContainer;
 import org.glassfish.jersey.internal.ProcessingException;
 import org.glassfish.jersey.media.sse.OutboundEventWriter;
 import org.glassfish.jersey.message.internal.ReaderWriter;
 import org.glassfish.jersey.moxy.json.MoxyJsonBinder;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.websocket.platform.BeanServer;
+import org.glassfish.websocket.platform.spi.grizzlyprovider.GrizzlyEngine;
 
-/**
- * Main class.
- *
- */
 public class Main {
     public static final String APP_PATH = "/drawingboard/";
     public static final String API_PATH = "/drawingboard-api/";
     public static final String WEB_ROOT = "/webroot";
+    public static final int PORT = 8080;
 
     /**
      * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
@@ -34,8 +35,9 @@ public class Main {
      */
     public static HttpServer startServer(String webrootPath) {
         final HttpServer server = new HttpServer();
-        final NetworkListener listener = new NetworkListener("grizzly", "localhost", 8080);
-
+        final NetworkListener listener = new NetworkListener("grizzly", "localhost", PORT);
+        listener.registerAddOn(new WebSocketAddOn());
+        
         server.addListener(listener);
 
         // Map the path to the processor.
@@ -45,10 +47,13 @@ public class Main {
         config.addHttpHandler(new StaticContentHandler(webrootPath), APP_PATH);
 
         try {
+            BeanServer beanServer = new BeanServer(GrizzlyEngine.class.getName());
+            beanServer.initWebSocketServer(API_PATH, PORT,
+                    Collections.<Class<?>>singleton(DrawingWebSocket.class));
             // Start the server.
             server.start();
-        } catch (IOException ex) {
-            throw new ProcessingException("IOException thrown when trying to start grizzly server", ex);
+        } catch (Exception ex) {
+            throw new ProcessingException("Exception thrown when trying to start grizzly server", ex);
         }
         
         return server;

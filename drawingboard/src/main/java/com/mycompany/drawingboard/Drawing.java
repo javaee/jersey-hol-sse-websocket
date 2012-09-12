@@ -8,6 +8,8 @@ public class Drawing {
     public List<Shape> shapes;
     
     public static class Shape {
+        public static final Shape NULL = new Shape();
+        
         public ShapeType type;
         public int x, y;
         public ShapeColor color;

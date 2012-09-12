@@ -22,7 +22,7 @@ public class DrawingsResource {
     @Produces(EventChannel.SERVER_SENT_EVENTS)
     public EventChannel getEvents() {
         EventChannel ec = new EventChannel();
-        DataProvider.registerListener(ec);
+        DataProvider.addEventChannel(ec);
         return ec;
     }
     

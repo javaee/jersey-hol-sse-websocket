@@ -3,19 +3,19 @@
 <p>Click to draw below (use SHIFT key too) <p>
 
 <form class="form-horizontal">
-    <select id="shapeType">
+    <select id="shapeType" ng-model="shapeType">
         <option value="BIG_CIRCLE">Big Circle</option>
         <option value="SMALL_CIRCLE">Small Circle</option>
         <option value="BIG_SQUARE">Big Square</option>
         <option value="SMALL_SQUARE">Small Square</option>
     </select>
-    <select id="shapeColor">
+    <select id="shapeColor" ng-model="shapeColor">
         <option value="RED">Red</option>
         <option value="GREEN">Green</option>
         <option value="BLUE">Blue</option>
         <option value="YELLOW">Yellow</option>
     </select>
-    <button onclick="clear_canvas()">Clear</button>
+    <button ng-click="clearCanvas()">Clear</button>
 </form>
 
 
@@ -23,10 +23,9 @@
     <tbody>
         <tr>
             <td>
-                <canvas id="drawing" width="500" height="500"></canvas>
-                <script ng-repeat="shape in drawing.shapes">
-                    drawShape(shape);
-                </script>
+                <canvas id="drawing" width="500" height="500"
+                        ng-mousedown="mouseDown($event)"
+                        ng-mousemove="mouseMove($event)"></canvas>
             </td>
         </tr>
     </tbody>
