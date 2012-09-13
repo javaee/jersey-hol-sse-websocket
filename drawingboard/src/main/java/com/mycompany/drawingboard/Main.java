@@ -20,8 +20,8 @@ import org.glassfish.jersey.media.sse.OutboundEventWriter;
 import org.glassfish.jersey.message.internal.ReaderWriter;
 import org.glassfish.jersey.moxy.json.MoxyJsonBinder;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.websocket.platform.BeanServer;
-import org.glassfish.websocket.platform.spi.grizzlyprovider.GrizzlyEngine;
+import org.glassfish.tyrus.platform.BeanServer;
+import org.glassfish.tyrus.spi.grizzlyprovider.GrizzlyEngine;
 
 public class Main {
     public static final String APP_PATH = "/drawingboard/";

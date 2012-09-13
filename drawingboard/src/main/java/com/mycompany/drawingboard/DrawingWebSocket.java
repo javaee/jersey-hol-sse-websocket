@@ -38,7 +38,7 @@ public class DrawingWebSocket {
             DataProvider.addWebSocket(drawingId, session);
         }
     }
-
+    
     @WebSocketClose
     public void onClose(Session session){
         int drawingId = sessionToId.get(session);
