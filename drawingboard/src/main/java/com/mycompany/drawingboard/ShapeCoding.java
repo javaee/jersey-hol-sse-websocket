@@ -14,7 +14,16 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 
+/**
+ * Encoder and decoder that de/en-codes web socket messages into/from Shape objects.
+ */
 public class ShapeCoding implements Decoder.Text<Drawing.Shape>, Encoder.Text<Drawing.Shape> {
+    /** 
+     * Special instance of Shape to indicate all shapes for a given drawing
+     * should be cleared.
+     */
+    public static final Drawing.Shape SHAPE_CLEAR_ALL = new Drawing.Shape();
+
     private static final Unmarshaller UNMARSHALLER;
     private static final Marshaller MARSHALLER;
     
@@ -23,8 +32,6 @@ public class ShapeCoding implements Decoder.Text<Drawing.Shape>, Encoder.Text<Dr
             JAXBContext jaxbContext = JAXBContextFactory.createContext(
                 new Class[] {
                     Drawing.Shape.class,
-//                    Drawing.ShapeColor.class,
-//                    Drawing.ShapeType.class,
                 }, Collections.emptyMap());
             UNMARSHALLER = jaxbContext.createUnmarshaller();
             UNMARSHALLER.setProperty("eclipselink.media-type", "application/json");
@@ -40,7 +47,7 @@ public class ShapeCoding implements Decoder.Text<Drawing.Shape>, Encoder.Text<Dr
     @Override
     public Drawing.Shape decode(String s) throws DecodeException {
         if ("clear".equals(s)) {
-            return Drawing.Shape.NULL;
+            return SHAPE_CLEAR_ALL;
         }
         
         try {
@@ -48,19 +55,20 @@ public class ShapeCoding implements Decoder.Text<Drawing.Shape>, Encoder.Text<Dr
                     new StreamSource(new ByteArrayInputStream(s.getBytes())),
                     Drawing.Shape.class).getValue();
         } catch (JAXBException ex) {
-            ex.printStackTrace();
             throw new DecodeException();
         }
     }
 
     @Override
     public boolean willDecode(String s) {
+        // we can always return true, as this decoder can work with any messages
+        // used by this application
         return true;
     }
 
     @Override
     public String encode(Drawing.Shape object) throws EncodeException {
-        if (object == Drawing.Shape.NULL) {
+        if (object == SHAPE_CLEAR_ALL) {
             return "clear";
         }
         
@@ -69,7 +77,6 @@ public class ShapeCoding implements Decoder.Text<Drawing.Shape>, Encoder.Text<Dr
         try {
             MARSHALLER.marshal(object, baos);
         } catch (JAXBException ex) {
-            ex.printStackTrace();
             throw new EncodeException(ex.getMessage(), ex);
         }
         

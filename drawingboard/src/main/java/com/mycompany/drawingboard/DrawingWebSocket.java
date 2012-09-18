@@ -14,6 +14,9 @@ import javax.net.websocket.annotations.WebSocketEndpoint;
 import javax.net.websocket.annotations.WebSocketMessage;
 import javax.net.websocket.annotations.WebSocketOpen;
 
+/**
+ * Class handling web socket connections at "/drawings/websockets/*" path.
+ */
 @WebSocketEndpoint(
         decoders = ShapeCoding.class,
         encoders = ShapeCoding.class,
@@ -23,6 +26,10 @@ public class DrawingWebSocket {
     private static final Pattern URI_PATTERN = Pattern.compile("(?:.*)/drawings/websockets/([0-9]+)");
     private static final ConcurrentHashMap<Session, Integer> sessionToId = new ConcurrentHashMap<>();
 
+    /**
+     * Method called by the web socket runtime when a new web socket opens.
+     * @param session Session associated with the new web socket connection.
+     */
     @WebSocketOpen
     public void onOpen(Session session) {
         Matcher matcher = URI_PATTERN.matcher(session.getRequestURI().toString());
@@ -39,19 +46,33 @@ public class DrawingWebSocket {
         }
     }
     
+    /**
+     * Method called by the web socket runtime when the web socket connection
+     * closes.
+     * @param session Session associated with the web socket connection being closed.
+     */
     @WebSocketClose
     public void onClose(Session session){
         int drawingId = sessionToId.get(session);
         DataProvider.removeWebSocket(drawingId, session);
     }
 
+    /**
+     * Handler for the incoming web socket messages.
+     * @param shape Body of the message (in our case it is always decoded as
+     *              an instance of Drawing.Shape).
+     * @param session Session associated with the web socket connection receiving
+     *                the message.
+     * @throws IOException
+     * @throws EncodeException 
+     */
     @WebSocketMessage
     public void shapeCreated(Drawing.Shape shape, Session session) throws IOException, EncodeException {
         int drawingId = sessionToId.get(session);
-        if (shape == Drawing.Shape.NULL) {
+        if (shape == ShapeCoding.SHAPE_CLEAR_ALL) {
             DataProvider.clearShapes(drawingId);
         } else {
-            DataProvider.newShape(drawingId, shape);
+            DataProvider.addShape(drawingId, shape);
         }
     }
 }

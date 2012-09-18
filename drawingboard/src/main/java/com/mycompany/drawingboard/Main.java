@@ -23,6 +23,9 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.tyrus.platform.BeanServer;
 import org.glassfish.tyrus.spi.grizzlyprovider.GrizzlyEngine;
 
+/**
+ * Main application class. Starts the embedded Grizzly HTTP server.
+ */
 public class Main {
     public static final String APP_PATH = "/drawingboard/";
     public static final String API_PATH = "/drawingboard-api/";
@@ -30,23 +33,27 @@ public class Main {
     public static final int PORT = 8080;
 
     /**
-     * Starts Grizzly HTTP server exposing JAX-RS resources defined in this application.
+     * Starts Grizzly HTTP server exposing static content, JAX-RS resources
+     * and web sockets defined in this application.
      * @return Grizzly HTTP server.
      */
     public static HttpServer startServer(String webrootPath) {
         final HttpServer server = new HttpServer();
         final NetworkListener listener = new NetworkListener("grizzly", "localhost", PORT);
+        
+        // activate the Grizzly web socket add-on to enable the web socket functionality
         listener.registerAddOn(new WebSocketAddOn());
         
         server.addListener(listener);
 
-        // Map the path to the processor.
         final ServerConfiguration config = server.getServerConfiguration();
-
-        config.addHttpHandler(createJerseyHandler(), API_PATH);
+        // add handler for serving static content
         config.addHttpHandler(new StaticContentHandler(webrootPath), APP_PATH);
+        // add handler for serving JAX-RS resources
+        config.addHttpHandler(createJerseyHandler(), API_PATH);
 
         try {
+            // initialize web socket bean server to handle web socket connections
             BeanServer beanServer = new BeanServer(GrizzlyEngine.class.getName());
             beanServer.initWebSocketServer(API_PATH, PORT,
                     Collections.<Class<?>>singleton(DrawingWebSocket.class));
@@ -61,35 +68,49 @@ public class Main {
 
     /**
      * Main method.
-     * @param args
+     * @param args First command line argument can be used to point to the location
+     *             of static content (by default the static content is read from
+     *             webroot directory of the application jar file.
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
         final HttpServer server = startServer(args.length >= 1 ? args[0] : null);
-        System.out.println(String.format("Jersey app started. The resources are"
-                + "available under http://localhost:8080%s\nHit enter to stop it..."
-                , API_PATH));
+        System.out.println(String.format("DrawingBoard started."
+                + "Access it at http://localhost:%s%sindex.html\n"
+                + "Hit enter to stop it..."
+                , PORT, APP_PATH));
         System.in.read();
         server.stop();
     }
     
+    /**
+     * Creates Grizzly HttpHandler that exposes JAX-RS resources defined in this
+     * application.
+     * @return Grizzly HttpHandler.
+     */
     private static HttpHandler createJerseyHandler() {
         // create a resource config that scans for JAX-RS resources and providers
-        // in com.mycompany.notebook package
+        // in com.mycompany.drawingboard package
         final ResourceConfig rc = new ResourceConfig()
                 .packages("com.mycompany.drawingboard")
+                // add message body writer for SSE
                 .addClasses(OutboundEventWriter.class)
+                // add support for JSON via MOXy
                 .addBinders(new MoxyJsonBinder());
 
-       
+        // create the handler
         return RuntimeDelegate.getInstance().createEndpoint(rc, GrizzlyHttpContainer.class);
     }
 
+    /**
+     * Simple HttpHandler for serving static content included in webroot
+     * directory of this application.
+     */
     private static class StaticContentHandler extends HttpHandler {
         private static final HashMap<String, String> EXTENSION_TO_MEDIA_TYPE;
         
         static {
-            EXTENSION_TO_MEDIA_TYPE = new HashMap<String, String>();
+            EXTENSION_TO_MEDIA_TYPE = new HashMap<>();
             
             EXTENSION_TO_MEDIA_TYPE.put("html", "text/html");
             EXTENSION_TO_MEDIA_TYPE.put("js", "application/javascript");

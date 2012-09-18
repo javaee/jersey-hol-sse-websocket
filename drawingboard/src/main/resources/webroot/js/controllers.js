@@ -2,36 +2,50 @@
 
 /* Controllers */
 
+// Controller for the main page (list of drawings)
 function MainController($scope, DrawingService, $http) {
+    // obtain drawings from the RESTful service
     $scope.drawings = DrawingService.query();
-    $scope.delete = function ($drawingId) {
-        DrawingService.delete({drawingId:$drawingId});
+    
+    // deletes a single drawing by ID
+    $scope.remove = function ($drawingId) {
+        DrawingService.remove({drawingId:$drawingId});
     };
     
+    // adds a new drawing
     $scope.addDrawing = function () {
         var newDrawing = new DrawingService({name: $scope.drawingName});
         $scope.drawingName = '';
         newDrawing.$save();
     };
     
-    var source=new EventSource("/drawingboard-api/drawings/events");
+    // listens to server-sent events for the list of drawings
+    $scope.eventSource = new EventSource("/drawingboard-api/drawings/events");
     
     var eventHandler = function (event) {
         $scope.drawings = DrawingService.query();
     };
     
-    source.addEventListener("create", eventHandler, false);
-    source.addEventListener("update", eventHandler, false);
-    source.addEventListener("delete", eventHandler, false);
+    $scope.eventSource.addEventListener("create", eventHandler, false);
+    $scope.eventSource.addEventListener("update", eventHandler, false);
+    $scope.eventSource.addEventListener("delete", eventHandler, false);
+    
+    // clean up
+    $scope.$destroy = function () {
+        $scope.eventSource.close();
+    }
 }
 
+// Controller for the drawing editor page
 function DrawingController($scope, $routeParams, DrawingService) {
     $scope.drawing = DrawingService.get({drawingId:$routeParams.drawingId});
     $scope.drawingCanvas = document.getElementById('drawing');
     $scope.shapeType = "BIG_CIRCLE";
     $scope.shapeColor = "RED";
 
-    $scope.websocket = new WebSocket("ws://localhost:8080/drawingboard-api/drawings/websockets/" + $routeParams.drawingId);
+    // open a web socket connection for a given drawing
+    $scope.websocket = new WebSocket("ws://" + document.location.host
+        + "/drawingboard-api/drawings/websockets/" + $routeParams.drawingId);
     $scope.websocket.onmessage = function (evt) {
         if (evt.data == "clear") {
             $scope.drawing.shapes = [];
@@ -43,8 +57,13 @@ function DrawingController($scope, $routeParams, DrawingService) {
             $scope.drawShape(eval("(" + evt.data + ")"));
         }
     };
+    
+    // clean up
+    $scope.$destroy = function () {
+        $scope.websocket.close();
+    }
 
-
+    // draws a given shape
     $scope.drawShape = function (shape) {
         var context = $scope.drawingCanvas.getContext('2d');
         var radius = 8;
@@ -70,20 +89,29 @@ function DrawingController($scope, $routeParams, DrawingService) {
         }
     }
 
+    // mouseMove event handler
     $scope.mouseMove = function (event) {
         if (event.shiftKey) {
             $scope.mouseDown(event);
         }
     }           
 
+    // mouseDown event handler
     $scope.mouseDown = function (event) {
+        var rect = $scope.drawingCanvas.getBoundingClientRect();
+        var root = document.documentElement;
+
+        var mouseX = event.clientX - rect.left - root.scrollTop;
+        var mouseY = event.clientY - rect.top - root.scrollLeft;
+
         $scope.websocket.send(
-            '{"x" : ' + event.layerX +
-            ', "y" : ' + event.layerY +
+            '{"x" : ' + mouseX +
+            ', "y" : ' + mouseY +
             ', "color" : "' + $scope.shapeColor + 
             '", "type" : "' + $scope.shapeType + '"}');
     }
     
+    // clears the canvas (deletes all shapes)
     $scope.clearCanvas = function () {
         $scope.websocket.send("clear");
     }
