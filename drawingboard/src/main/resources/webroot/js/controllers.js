@@ -31,9 +31,9 @@ function MainController($scope, DrawingService, $http) {
     $scope.eventSource.addEventListener("delete", eventHandler, false);
     
     // clean up
-    $scope.$destroy = function () {
+    $scope.$on("$destroy", function (event) {
         $scope.eventSource.close();
-    }
+    });
 }
 
 // Controller for the drawing editor page
@@ -59,9 +59,9 @@ function DrawingController($scope, $routeParams, DrawingService) {
     };
     
     // clean up
-    $scope.$destroy = function () {
+    $scope.$on("$destroy", function (event) {
         $scope.websocket.close();
-    }
+    });
 
     // draws a given shape
     $scope.drawShape = function (shape) {

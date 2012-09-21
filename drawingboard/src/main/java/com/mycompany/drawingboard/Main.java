@@ -123,6 +123,10 @@ public class Main {
         
         StaticContentHandler(String webrootPath) {
             this.webrootPath = webrootPath;
+            if (webrootPath != null) {
+                System.out.println("Reading static content from the following"
+                        + " directory: " + webrootPath);
+            }
         }
         
         @Override
@@ -148,14 +152,18 @@ public class Main {
                 uri = uri.substring(resourcesContextPath.length());
             }
             
-            InputStream fileStream;
+            InputStream fileStream = null;
             
-            try {
-                fileStream = webrootPath == null ?
-                        Main.class.getResourceAsStream(WEB_ROOT + uri) :
-                        new FileInputStream(webrootPath + uri);
-            } catch (IOException e) {
-                fileStream = null;
+            if (webrootPath != null) {
+                try {
+                    fileStream = new FileInputStream(webrootPath + uri);
+                } catch (IOException e) {
+                    fileStream = null;
+                }
+            }
+            
+            if (fileStream == null) {
+                fileStream = getClass().getResourceAsStream(WEB_ROOT + uri);
             }
             
             if (fileStream == null) {
@@ -163,7 +171,11 @@ public class Main {
             } else {
                 response.setStatus(HttpStatus.OK_200);
                 response.setContentType(mediaType);
-                ReaderWriter.writeTo(fileStream, response.getOutputStream());
+                try (InputStream is = fileStream) {
+                    ReaderWriter.writeTo(is, response.getOutputStream());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

@@ -66,7 +66,7 @@ class DataProvider {
         sseBroadcaster.broadcast(new OutboundEvent.Builder()
                 .id(String.valueOf(++eventId))
                 .name("create")
-                .data(Drawing.class, drawing)
+                .data(Drawing.class, result)
                 .mediaType(MediaType.APPLICATION_JSON_TYPE)
                 .build());
         return result.id;
