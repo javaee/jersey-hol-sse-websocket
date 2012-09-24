@@ -1,0 +1,35 @@
+<h2>Drawing '{{drawing.name}}'</h2>
+
+<p>Click to draw below (use SHIFT key too) <p>
+
+<form class="form-horizontal">
+    <select id="shapeType" ng-model="shapeType">
+        <option value="BIG_CIRCLE">Big Circle</option>
+        <option value="SMALL_CIRCLE">Small Circle</option>
+        <option value="BIG_SQUARE">Big Square</option>
+        <option value="SMALL_SQUARE">Small Square</option>
+    </select>
+    <select id="shapeColor" ng-model="shapeColor">
+        <option value="RED">Red</option>
+        <option value="GREEN">Green</option>
+        <option value="BLUE">Blue</option>
+        <option value="YELLOW">Yellow</option>
+    </select>
+    <button ng-click="clearCanvas()">Clear</button>
+</form>
+
+
+<table>
+    <tbody>
+        <tr>
+            <td>
+                <canvas style="border-width: 1px; border-color: gray; border-style: dashed;"
+                        id="drawing" width="500" height="500"
+                        ng-mousedown="mouseDown($event)"
+                        ng-mousemove="mouseMove($event)"></canvas>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<a class="btn" href="#home">Back</a>
