@@ -97,16 +97,23 @@ function DrawingController($scope, $routeParams, DrawingService) {
     }           
 
     // mouseDown event handler
-    $scope.mouseDown = function (event) {
-        var rect = $scope.drawingCanvas.getBoundingClientRect();
-        var root = document.documentElement;
-
-        var mouseX = event.clientX - rect.left - root.scrollTop;
-        var mouseY = event.clientY - rect.top - root.scrollLeft;
+    $scope.mouseDown = function (e) {
+        var totalOffsetX = 0;
+        var totalOffsetY = 0;
+        var currentElement = $scope.drawingCanvas;
+        
+        do {
+            totalOffsetX += currentElement.offsetLeft;
+            totalOffsetY += currentElement.offsetTop;
+        } while (currentElement = currentElement.offsetParent);
+        
+        
+	var posx = e.pageX - totalOffsetX;
+        var posy = e.pageY - totalOffsetY;
 
         $scope.websocket.send(
-            '{"x" : ' + mouseX +
-            ', "y" : ' + mouseY +
+            '{"x" : ' + posx +
+            ', "y" : ' + posy +
             ', "color" : "' + $scope.shapeColor + 
             '", "type" : "' + $scope.shapeType + '"}');
     }
