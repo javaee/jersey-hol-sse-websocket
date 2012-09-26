@@ -20,10 +20,10 @@ import javax.net.websocket.annotations.WebSocketOpen;
 @WebSocketEndpoint(
         decoders = ShapeCoding.class,
         encoders = ShapeCoding.class,
-        path = "/websockets/"
+        path = "/drawings/websockets/"
 )
 public class DrawingWebSocket {
-    private static final Pattern URI_PATTERN = Pattern.compile("(?:.*)/websockets/([0-9]+)");
+    private static final Pattern URI_PATTERN = Pattern.compile("(?:.*)/drawings/websockets/([0-9]+)");
     private static final ConcurrentHashMap<Session, Integer> sessionToId = new ConcurrentHashMap<>();
 
     /**
