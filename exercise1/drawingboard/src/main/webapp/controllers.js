@@ -20,7 +20,7 @@ function MainController($scope, DrawingService, $http) {
     };
     
     // listens to server-sent events for the list of drawings
-    $scope.eventSource = new EventSource("/drawingboard-api/drawings/events");
+    $scope.eventSource = new EventSource("/drawingboard/api/drawings/events");
     
     var eventHandler = function (event) {
         $scope.drawings = DrawingService.query();
@@ -45,7 +45,7 @@ function DrawingController($scope, $routeParams, DrawingService) {
 
     // open a web socket connection for a given drawing
     $scope.websocket = new WebSocket("ws://" + document.location.host
-        + "/drawingboard-api/drawings/websockets/" + $routeParams.drawingId);
+        + "/drawingboard/websockets/" + $routeParams.drawingId);
     $scope.websocket.onmessage = function (evt) {
         if (evt.data == "clear") {
             $scope.drawing.shapes = [];
@@ -97,16 +97,23 @@ function DrawingController($scope, $routeParams, DrawingService) {
     }           
 
     // mouseDown event handler
-    $scope.mouseDown = function (event) {
-        var rect = $scope.drawingCanvas.getBoundingClientRect();
-        var root = document.documentElement;
-
-        var mouseX = event.clientX - rect.left - root.scrollTop;
-        var mouseY = event.clientY - rect.top - root.scrollLeft;
+    $scope.mouseDown = function (e) {
+        var totalOffsetX = 0;
+        var totalOffsetY = 0;
+        var currentElement = $scope.drawingCanvas;
+        
+        do {
+            totalOffsetX += currentElement.offsetLeft;
+            totalOffsetY += currentElement.offsetTop;
+        } while (currentElement = currentElement.offsetParent);
+        
+        
+	var posx = e.pageX - totalOffsetX;
+        var posy = e.pageY - totalOffsetY;
 
         $scope.websocket.send(
-            '{"x" : ' + mouseX +
-            ', "y" : ' + mouseY +
+            '{"x" : ' + posx +
+            ', "y" : ' + posy +
             ', "color" : "' + $scope.shapeColor + 
             '", "type" : "' + $scope.shapeType + '"}');
     }
