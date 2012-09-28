@@ -27,7 +27,6 @@ function MainController($scope, DrawingService, $http) {
     };
     
     $scope.eventSource.addEventListener("create", eventHandler, false);
-    $scope.eventSource.addEventListener("update", eventHandler, false);
     $scope.eventSource.addEventListener("delete", eventHandler, false);
     
     // clean up

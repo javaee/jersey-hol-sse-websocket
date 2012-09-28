@@ -25,9 +25,6 @@ class DataProvider {
     private static final HashMap<Integer, Drawing> drawings
             = new HashMap<>();
     
-    /** ID of the last generated server-sent event. */
-    private static int eventId = 0;
-
     /** Broadcaster for server-sent events. */
     private static SseBroadcaster sseBroadcaster = new SseBroadcaster();
 
@@ -64,7 +61,6 @@ class DataProvider {
         result.shapes = drawing.shapes;
         drawings.put(result.id, result);
         sseBroadcaster.broadcast(new OutboundEvent.Builder()
-                .id(String.valueOf(++eventId))
                 .name("create")
                 .data(Drawing.class, result)
                 .mediaType(MediaType.APPLICATION_JSON_TYPE)
@@ -73,22 +69,6 @@ class DataProvider {
     }
 
     /**
-     * Creates or updates a drawing.
-     * @param drawing New version of a drawing.
-     * @return {@code true} if a new drawing was created, {@code false} if an
-     *         existing drawing was updated.
-     */
-    static synchronized boolean updateDrawing(Drawing drawing) {
-        sseBroadcaster.broadcast(new OutboundEvent.Builder()
-                .id(String.valueOf(++eventId))
-                .name("update")
-                .data(Drawing.class, drawing)
-                .mediaType(MediaType.APPLICATION_JSON_TYPE)
-                .build());
-        return drawings.put(drawing.id, drawing) == null;
-    }
-    
-    /**
      * Delete a drawing with a given ID.
      * @param drawingId ID of the drawing to be deleted.
      * @return {@code true} if the drawing was deleted, {@code false} if there
@@ -96,7 +76,6 @@ class DataProvider {
      */
     static synchronized boolean deleteDrawing(int drawingId) {
         sseBroadcaster.broadcast(new OutboundEvent.Builder()
-                .id(String.valueOf(++eventId))
                 .name("delete")
                 .data(String.class, String.valueOf(drawingId))
                 .build());

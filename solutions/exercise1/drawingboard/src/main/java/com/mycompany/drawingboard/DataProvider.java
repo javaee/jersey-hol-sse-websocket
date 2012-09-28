@@ -47,16 +47,6 @@ class DataProvider {
     }
 
     /**
-     * Creates or updates a drawing.
-     * @param drawing New version of a drawing.
-     * @return {@code true} if a new drawing was created, {@code false} if an
-     *         existing drawing was updated.
-     */
-    static synchronized boolean updateDrawing(Drawing drawing) {
-        return drawings.put(drawing.id, drawing) == null;
-    }
-    
-    /**
      * Delete a drawing with a given ID.
      * @param drawingId ID of the drawing to be deleted.
      * @return {@code true} if the drawing was deleted, {@code false} if there
