@@ -3,74 +3,68 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mycompany</groupId>
     <artifactId>drawingboard</artifactId>
-    <packaging>jar</packaging>
-    <version>1.0-m03-SNAPSHOT</version>
-    <name>Drawing Board</name>
-    <dependencies>
-        <dependency>
-            <groupId>javax.net.websocket</groupId>
-            <artifactId>javax.net.websocket-api</artifactId>
-            <version>${websocket-api-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.tyrus</groupId>
-            <artifactId>websocket-impl</artifactId>
-            <version>${websocket-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.tyrus</groupId>
-            <artifactId>websocket-provider-grizzly</artifactId>
-            <version>${websocket-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-grizzly2-http</artifactId>
-            <version>${jersey-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-moxy</artifactId>
-            <version>${jersey-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-sse</artifactId>
-            <version>${jersey-version}</version>
-        </dependency>
-    </dependencies>
+    <packaging>war</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>Drawing Board Web Application</name>
     <build>
+        <finalName>drawingboard</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <inherited>true</inherited>
+                <version>2.5.1</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.2</version>
                 <configuration>
-                    <mainClass>com.mycompany.drawingboard.Main</mainClass>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-moxy</artifactId>
+            <version>${jersey.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-sse</artifactId>
+            <version>${jersey.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.tyrus</groupId>
+            <artifactId>websocket-impl</artifactId>
+            <version>${websocket-version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.0-b01</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
     <properties>
-        <jersey-version>2.0-m07-1</jersey-version>
-        <websocket-version>1.0-b03-SNAPSHOT</websocket-version>
-        <websocket-api-version>1.0-b03-SNAPSHOT</websocket-api-version>
+        <jersey.version>2.0-m08</jersey.version>
+        <websocket-version>1.0-b04</websocket-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
+        <netbeans.hint.j2eeVersion>1.6</netbeans.hint.j2eeVersion>
     </properties>
 </project>

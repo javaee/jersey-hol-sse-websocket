@@ -25,9 +25,6 @@ class DataProvider {
     private static final HashMap<Integer, Drawing> drawings
             = new HashMap<>();
     
-    /** ID of the last generated server-sent event. */
-    private static int eventId = 0;
-
     /** Broadcaster for server-sent events. */
     private static SseBroadcaster sseBroadcaster = new SseBroadcaster();
 
@@ -64,30 +61,13 @@ class DataProvider {
         result.shapes = drawing.shapes;
         drawings.put(result.id, result);
         sseBroadcaster.broadcast(new OutboundEvent.Builder()
-                .id(String.valueOf(++eventId))
                 .name("create")
-                .data(Drawing.class, drawing)
+                .data(Drawing.class, result)
                 .mediaType(MediaType.APPLICATION_JSON_TYPE)
                 .build());
         return result.id;
     }
 
-    /**
-     * Creates or updates a drawing.
-     * @param drawing New version of a drawing.
-     * @return {@code true} if a new drawing was created, {@code false} if an
-     *         existing drawing was updated.
-     */
-    static synchronized boolean updateDrawing(Drawing drawing) {
-        sseBroadcaster.broadcast(new OutboundEvent.Builder()
-                .id(String.valueOf(++eventId))
-                .name("update")
-                .data(Drawing.class, drawing)
-                .mediaType(MediaType.APPLICATION_JSON_TYPE)
-                .build());
-        return drawings.put(drawing.id, drawing) == null;
-    }
-    
     /**
      * Delete a drawing with a given ID.
      * @param drawingId ID of the drawing to be deleted.
@@ -96,7 +76,6 @@ class DataProvider {
      */
     static synchronized boolean deleteDrawing(int drawingId) {
         sseBroadcaster.broadcast(new OutboundEvent.Builder()
-                .id(String.valueOf(++eventId))
                 .name("delete")
                 .data(String.class, String.valueOf(drawingId))
                 .build());
@@ -118,23 +97,6 @@ class DataProvider {
             }
             drawing.shapes.add(shape);
             wsBroadcast(drawingId, shape);
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Delete all shapes from the drawing.
-     * @param drawingId ID of the drawing that should be cleared.
-     * @return {@code true} if the drawing was cleared, {@code false} if no such
-     *         drawing was found.
-     */
-    static synchronized boolean clearShapes(int drawingId) {
-        Drawing drawing = getDrawing(drawingId);
-        if (drawing != null) {
-            drawing.shapes.clear();
-            wsBroadcast(drawingId, ShapeCoding.SHAPE_CLEAR_ALL);
             return true;
         } else {
             return false;
@@ -193,15 +155,13 @@ class DataProvider {
      *              if the drawing was cleared (i.e. all shapes were deleted).
      */
     private static void wsBroadcast(int drawingId, Drawing.Shape shape) {
-        synchronized (webSockets) {
-            List<Session> sessions = webSockets.get(drawingId);
-            if (sessions != null) {
-                for (Session session : sessions) {
-                    try {
-                        session.getRemote().sendObject(shape);
-                    } catch (IOException | EncodeException ex) {
-                        Logger.getLogger(DataProvider.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+        List<Session> sessions = webSockets.get(drawingId);
+        if (sessions != null) {
+            for (Session session : sessions) {
+                try {
+                    session.getRemote().sendObject(shape);
+                } catch (IOException | EncodeException ex) {
+                    Logger.getLogger(DataProvider.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }

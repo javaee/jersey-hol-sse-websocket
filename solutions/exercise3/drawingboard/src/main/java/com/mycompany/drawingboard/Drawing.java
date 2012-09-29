@@ -33,7 +33,7 @@ public class Drawing {
     }
     
     /**
-     * Enum for shape types.
+     * Shape types.
      */
     public static enum ShapeType {
         BIG_CIRCLE, 
@@ -43,7 +43,7 @@ public class Drawing {
     }
     
     /**
-     * Enum or shape colors.
+     * Shape colors.
      */
     public static enum ShapeColor {
         RED,

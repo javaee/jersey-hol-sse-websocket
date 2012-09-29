@@ -46,15 +46,7 @@ function DrawingController($scope, $routeParams, DrawingService) {
     $scope.websocket = new WebSocket("ws://" + document.location.host
         + "/drawingboard/websockets/" + $routeParams.drawingId);
     $scope.websocket.onmessage = function (evt) {
-        if (evt.data == "clear") {
-            $scope.drawing.shapes = [];
-            var context = $scope.drawingCanvas.getContext('2d');
-            context.fillStyle = "white";
-            context.fillRect(0,0,500,500);
-            context.fill();
-        } else {
-            $scope.drawShape(eval("(" + evt.data + ")"));
-        }
+        $scope.drawShape(eval("(" + evt.data + ")"));
     };
     
     // clean up
@@ -115,10 +107,5 @@ function DrawingController($scope, $routeParams, DrawingService) {
             ', "y" : ' + posy +
             ', "color" : "' + $scope.shapeColor + 
             '", "type" : "' + $scope.shapeType + '"}');
-    }
-    
-    // clears the canvas (deletes all shapes)
-    $scope.clearCanvas = function () {
-        $scope.websocket.send("clear");
     }
 }

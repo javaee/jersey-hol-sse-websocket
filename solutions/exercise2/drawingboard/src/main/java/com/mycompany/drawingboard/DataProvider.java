@@ -93,22 +93,6 @@ class DataProvider {
     }
     
     /**
-     * Delete all shapes from the drawing.
-     * @param drawingId ID of the drawing that should be cleared.
-     * @return {@code true} if the drawing was cleared, {@code false} if no such
-     *         drawing was found.
-     */
-    static synchronized boolean clearShapes(int drawingId) {
-        Drawing drawing = getDrawing(drawingId);
-        if (drawing != null) {
-            drawing.shapes.clear();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Registers a new channel for sending events. An event channel corresponds
      * to a client (browser) event source connection.
      * @param ec Event channel to be registered for sending events.

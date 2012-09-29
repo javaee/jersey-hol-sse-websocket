@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.net.websocket.CloseReason;
-import javax.net.websocket.EncodeException;
 import javax.net.websocket.Session;
 import javax.net.websocket.annotations.WebSocketClose;
 import javax.net.websocket.annotations.WebSocketEndpoint;
@@ -15,7 +14,7 @@ import javax.net.websocket.annotations.WebSocketMessage;
 import javax.net.websocket.annotations.WebSocketOpen;
 
 /**
- * Class handling web socket connections at "/drawings/websockets/*" path.
+ * Class handling web socket connections at "/websockets/*" path.
  */
 @WebSocketEndpoint(
         decoders = ShapeCoding.class,
@@ -53,7 +52,7 @@ public class DrawingWebSocket {
      */
     @WebSocketClose
     public void onClose(Session session){
-        int drawingId = sessionToId.get(session);
+        int drawingId = sessionToId.remove(session);
         DataProvider.removeWebSocket(drawingId, session);
     }
 
@@ -63,16 +62,10 @@ public class DrawingWebSocket {
      *              an instance of Drawing.Shape).
      * @param session Session associated with the web socket connection receiving
      *                the message.
-     * @throws IOException
-     * @throws EncodeException 
      */
     @WebSocketMessage
-    public void shapeCreated(Drawing.Shape shape, Session session) throws IOException, EncodeException {
+    public void shapeCreated(Drawing.Shape shape, Session session) {
         int drawingId = sessionToId.get(session);
-        if (shape == ShapeCoding.SHAPE_CLEAR_ALL) {
-            DataProvider.clearShapes(drawingId);
-        } else {
-            DataProvider.addShape(drawingId, shape);
-        }
+        DataProvider.addShape(drawingId, shape);
     }
 }

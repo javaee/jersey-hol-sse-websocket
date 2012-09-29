@@ -31,7 +31,6 @@
     <properties>
         <jersey.version>2.0-m08</jersey.version>
         <websocket-version>1.0-b04</websocket-version>
-        <websocket-api-version>1.0-b03</websocket-api-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
         <netbeans.hint.j2eeVersion>1.6</netbeans.hint.j2eeVersion>
