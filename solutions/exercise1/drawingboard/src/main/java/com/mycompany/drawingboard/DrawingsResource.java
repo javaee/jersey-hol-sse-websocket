@@ -42,10 +42,25 @@ public class DrawingsResource {
      * @return List of all drawings.
      */
     @GET
-    public List<Drawing> get() {
+    public List<Drawing> getAll() {
         return DataProvider.getAllDrawings();
     }
-
+    
+    /**
+     * Retrieves a single drawing.
+     * @param drawingId ID of the drawing to be retrieved.
+     * @return Drawing.
+     */
+    @Path("{id:[0-9]+}")
+    @GET
+    public Drawing get(@PathParam("id") int drawingId) {
+        Drawing result = DataProvider.getDrawing(drawingId);
+        if (result == null) {
+            throw new NotFoundException();
+        }
+        return result;
+    }
+    
     /**
      * Deletes a drawing.
      * @param drawingId ID of the drawing to be deleted.

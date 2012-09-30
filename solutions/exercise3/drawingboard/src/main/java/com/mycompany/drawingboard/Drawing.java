@@ -30,6 +30,11 @@ public class Drawing {
         
         /** Shape color. */
         public ShapeColor color;
+
+        @Override
+        public String toString() {
+            return "Shape(" + x + ", " + y + ", " + type + ", " + color + ")";
+        }
     }
     
     /**
@@ -50,5 +55,10 @@ public class Drawing {
         GREEN,
         BLUE,
         YELLOW,
+    }
+
+    @Override
+    public String toString() {
+        return "Drawing(" + name + ", " + shapes + ")";
     }
 }

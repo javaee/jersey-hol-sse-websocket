@@ -30,10 +30,15 @@ public class Drawing {
         
         /** Shape color. */
         public ShapeColor color;
+
+        @Override
+        public String toString() {
+            return "Shape(" + x + ", " + y + ", " + type + ", " + color + ")";
+        }
     }
     
     /**
-     * Enum for shape types.
+     * Shape types.
      */
     public static enum ShapeType {
         BIG_CIRCLE, 
@@ -43,12 +48,17 @@ public class Drawing {
     }
     
     /**
-     * Enum or shape colors.
+     * Shape colors.
      */
     public static enum ShapeColor {
         RED,
         GREEN,
         BLUE,
         YELLOW,
+    }
+
+    @Override
+    public String toString() {
+        return "Drawing(" + name + ", " + shapes + ")";
     }
 }
