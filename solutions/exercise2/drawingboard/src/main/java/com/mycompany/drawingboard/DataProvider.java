@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.ws.rs.core.MediaType;
-import org.glassfish.jersey.media.sse.EventChannel;
+import org.glassfish.jersey.media.sse.EventOutput;
 import org.glassfish.jersey.media.sse.OutboundEvent;
 import org.glassfish.jersey.media.sse.SseBroadcaster;
 
@@ -93,11 +93,11 @@ class DataProvider {
     }
     
     /**
-     * Registers a new channel for sending events. An event channel corresponds
+     * Registers a new channel(EventOutput) for sending events. An event channel corresponds
      * to a client (browser) event source connection.
-     * @param ec Event channel to be registered for sending events.
+     * @param eo Event channel to be registered for sending events.
      */
-    static void addEventChannel(EventChannel ec) {
-        sseBroadcaster.add(ec);
+    static void addEventOutput(EventOutput eo) {
+        sseBroadcaster.add(eo);
     }
 }

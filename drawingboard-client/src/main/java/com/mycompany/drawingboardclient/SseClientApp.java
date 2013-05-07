@@ -48,7 +48,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import javax.ws.rs.client.ClientException;
 import javax.ws.rs.client.WebTarget;
 import javax.swing.DefaultListModel;
 import org.glassfish.jersey.media.sse.EventSource;
@@ -209,7 +208,7 @@ public class SseClientApp extends javax.swing.JFrame {
                 public EventSource call() throws Exception {
                     try {
                         return connect(url);
-                    } catch (ClientException ex) {
+                    } catch (Exception ex) {
                         stopAsFailed(ex.getCause().getMessage());
                         throw ex;
                     }

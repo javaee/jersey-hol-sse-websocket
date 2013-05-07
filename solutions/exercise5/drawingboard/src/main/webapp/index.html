@@ -1,0 +1,40 @@
+<!doctype html>
+<html ng-app="myApp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drawing Board</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      
+      .table td {
+          vertical-align: middle;
+      }
+    </style>
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="hero-unit">
+        <h1>Drawing Board</h1>
+        <p>
+            Live group drawing.
+        </p>
+    </div>
+    
+    <div ng-view></div>
+</div>
+
+
+    <script src="lib/angular.min.js"></script>
+    <script src="lib/angular-resource.min.js"></script>
+    <script src="lib/bootstrap.min.js"></script>
+    <script src="app.js"></script>
+    <script src="services.js"></script>
+    <script src="controllers.js"></script>
+</body>
+</html>

@@ -13,7 +13,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import org.glassfish.jersey.media.sse.EventChannel;
+import org.glassfish.jersey.media.sse.EventOutput;
+import org.glassfish.jersey.media.sse.SseFeature;
 
 /**
  * JAX-RS root resource exposing RESTful interface to access drawings.
@@ -81,10 +82,10 @@ public class DrawingsResource {
      */
     @GET
     @Path("events")
-    @Produces(EventChannel.SERVER_SENT_EVENTS)
-    public EventChannel getEvents() {
-        EventChannel ec = new EventChannel();
-        DataProvider.addEventChannel(ec);
-        return ec;
+    @Produces(SseFeature.SERVER_SENT_EVENTS)
+    public EventOutput getEvents() {
+        EventOutput eo = new EventOutput();
+        DataProvider.addEventOutput(eo);
+        return eo;
     }
 }

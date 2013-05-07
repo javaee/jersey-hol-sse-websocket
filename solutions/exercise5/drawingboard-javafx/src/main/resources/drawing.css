@@ -1,0 +1,17 @@
+/*
+ * Empty Stylesheet file.
+*/
+
+.pane {
+-fx-border-color: black
+}
+
+.label{
+    -fx-font-family: arial;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+.head-label{
+    -fx-font-size: 22;
+}
+
