@@ -3,6 +3,7 @@ package com.mycompany.drawingboard;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import javax.websocket.Session;
 
 /**
  * Simple in-memory data storage for the application.
@@ -75,4 +76,26 @@ class DataProvider {
             return false;
         }
     }
+    /**
+     * Registers a new web socket session and associates it with a drawing ID.
+     * This method should be called when a client opens a web socket connection
+     * to a particular drawing URI.
+     * @param drawingId Drawing ID to associate the web socket session with.
+     * @param session New web socket session to be registered.
+     */
+    static synchronized void addWebSocket(int drawingId, Session session) {
+        
+    }
+    
+    /**
+     * Removes the existing web socket session associated with a drawing ID.
+     * This method should be called when a client closes the web socket connection
+     * to a particular drawing URI.
+     * @param drawingId ID of the drawing the web socket session is associated with.
+     * @param session Web socket session to be removed.
+     */
+    static synchronized void removeWebSocket(int drawingId, Session session) {
+    
+    }
+
 }

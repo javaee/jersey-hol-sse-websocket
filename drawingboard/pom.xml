@@ -36,6 +36,14 @@
             </plugin>
         </plugins>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>javax</groupId>  
+            <artifactId>javaee-api</artifactId>  
+            <version>${javaee7.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
     <properties>
         <jersey.version>2.0-rc1</jersey.version>
         <javaee7.version>7.0-b84</javaee7.version>
