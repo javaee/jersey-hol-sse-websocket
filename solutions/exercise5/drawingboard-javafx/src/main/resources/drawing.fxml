@@ -9,10 +9,14 @@
 <?import javafx.scene.web.*?>
 
 <AnchorPane id="AnchorPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="700.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml" fx:controller="com.mycompany.websocket.draw.sample.javafx.DrawingController">
-  <children>
-    <WebView fx:id="webview" layoutX="0.0" layoutY="0.0" minHeight="100.0" minWidth="100.0" prefHeight="700.0" prefWidth="700.0" />
-  </children>
-  <stylesheets>
-    <URL value="@drawing.css" />
-  </stylesheets>
+    <children>
+        <VBox prefHeight="700.0" prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <WebView fx:id="webview" minHeight="100.0" minWidth="100.0" prefHeight="700.0" prefWidth="700.0" />
+            </children>
+        </VBox>
+    </children>
+    <stylesheets>
+        <URL value="@drawing.css" />
+    </stylesheets>
 </AnchorPane>
