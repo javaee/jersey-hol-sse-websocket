@@ -20,9 +20,6 @@ public class ShapeCoding implements Decoder.Text<Drawing.Shape>, Encoder.Text<Dr
 
     @Override
     public Drawing.Shape decode(String s) throws DecodeException {
-        // temporary workaround for a web socket implementation issue
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-
         Drawing.Shape shape = new Drawing.Shape();
 
         try (JsonReader reader = Json.createReader(new StringReader(s))) {
@@ -47,9 +44,6 @@ public class ShapeCoding implements Decoder.Text<Drawing.Shape>, Encoder.Text<Dr
 
     @Override
     public String encode(Drawing.Shape object) throws EncodeException {
-        // temporary workaround for a web socket implementation issue
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-
         StringWriter result = new StringWriter();
 
         try (JsonGenerator gen = Json.createGenerator(result)) {
