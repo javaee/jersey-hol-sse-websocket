@@ -1,0 +1,13 @@
+<div class="span12">
+    <form>
+        Drawing Name: <input style="margin-bottom: 2px" type="text" ng-model="drawingName" ng-model-instant>
+        <button class="btn" style="margin-bottom: 2px" ng-click="addDrawing()"><i class="icon-plus"></i>New</button>
+    </form>
+    <table class="table table-striped">
+        <tr ng-repeat="drawing in drawings">
+            <td>{{drawing.id}}</td>
+            <td width="100%"><a href="#drawings/{{drawing.id}}">{{drawing.name}}</a></td>
+            <td><button class="btn-small" ng-click="remove(drawing.id)"><i class="icon-remove"></i></button></td>
+        </tr>
+    </table>
+</div>

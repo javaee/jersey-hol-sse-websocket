@@ -1,18 +1,21 @@
 package com.mycompany.drawingboard;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.ws.rs.ApplicationPath;
-import org.glassfish.jersey.moxy.json.MoxyJsonBinder;
-import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 
 /**
  * JAX-RS application class.
  */
 @ApplicationPath("api")
-public class JaxrsApplication extends ResourceConfig {
-    public JaxrsApplication() {
-        // consists of a single resource
-        super(DrawingsResource.class);
-        // add MOXy binders for JSON String<->Java conversion
-        addBinders(new MoxyJsonBinder());
+public class JaxrsApplication extends javax.ws.rs.core.Application {
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        classes.add(DrawingsResource.class);
+        classes.add(MoxyJsonFeature.class);
+        return classes;
     }
 }
