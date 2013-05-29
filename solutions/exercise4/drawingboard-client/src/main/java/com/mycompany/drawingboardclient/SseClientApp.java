@@ -49,16 +49,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientException;
-import javax.ws.rs.client.ClientFactory;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.swing.DefaultListModel;
-import org.glassfish.jersey.client.ClientConfig;
+import javax.ws.rs.client.ClientBuilder;
 import org.glassfish.jersey.media.sse.EventSource;
 import org.glassfish.jersey.media.sse.InboundEvent;
-import org.glassfish.jersey.moxy.json.MoxyJsonBinder;
+import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 
 /**
  *
@@ -71,9 +69,7 @@ public class SseClientApp extends javax.swing.JFrame {
         this.drawingsListModel = new DefaultListModel();
         this.executor = Executors.newCachedThreadPool();
 
-        this.jaxrsClient = ClientFactory.newClient(
-                new ClientConfig().binders(new MoxyJsonBinder()));
-
+        this.jaxrsClient = ClientBuilder.newClient().register(MoxyJsonFeature.class);
         initComponents();
     }
 
@@ -219,7 +215,7 @@ public class SseClientApp extends javax.swing.JFrame {
                 public EventSource call() throws Exception {
                     try {
                         return connect(url);
-                    } catch (ClientException ex) {
+                    } catch (Exception ex) {
                         stopAsFailed(ex.getCause().getMessage());
                         throw ex;
                     }
