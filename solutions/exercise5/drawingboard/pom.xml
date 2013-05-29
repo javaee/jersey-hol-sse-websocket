@@ -57,7 +57,7 @@
         </dependency>
     </dependencies>
     <properties>
-        <jersey.version>2.0-rc1</jersey.version>
+        <jersey.version>2.0</jersey.version>
         <javaee7.version>7.0-b84</javaee7.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>

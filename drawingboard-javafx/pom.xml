@@ -62,7 +62,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jersey.version>2.0-rc1</jersey.version>
-        <tyrus.version>1.0-rc2</tyrus.version>
+        <jersey.version>2.0</jersey.version>
+        <tyrus.version>1.0</tyrus.version>
     </properties>
 </project>
